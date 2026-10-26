@@ -1,19 +1,192 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praktikum WebGL Three.js: Interactive Picking & GUI</title>
+
     <style>
-        body { margin: 0; overflow: hidden; font-family: sans-serif; }
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: sans-serif;
+            background: #1a1a24;
+        }
+
+        canvas {
+            display: block;
+        }
+
         #info {
-            position: absolute; top: 10px; left: 10px; color: white;
-            background: rgba(0,0,0,0.7); padding: 10px 15px; border-radius: 8px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            max-width: 310px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
             pointer-events: none;
+            z-index: 5;
+        }
+
+        #info h3 {
+            margin-top: 5px;
+        }
+
+        #info p {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* GALERI FOTO TERPISAH */
+        #gallery {
+            position: absolute;
+            left: 50%;
+            bottom: 12px;
+            transform: translateX(-50%);
+            width: min(620px, calc(100% - 24px));
+            padding: 12px;
+            color: white;
+            background: rgba(15, 15, 25, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 14px;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+
+        #gallery h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+        }
+
+        .gallery-list {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 9px;
+        }
+
+        .gallery-item {
+            min-width: 0;
+            padding: 5px;
+            color: white;
+            text-align: center;
+            background: #292936;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .gallery-item:hover {
+            border-color: #aaaaaa;
+            transform: translateY(-2px);
+        }
+
+        .gallery-item.selected {
+            border-color: #00ffcc;
+            box-shadow: 0 0 12px rgba(0, 255, 204, 0.45);
+        }
+
+        .gallery-item img {
+            display: block;
+            width: 100%;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #414150;
+        }
+
+        .gallery-item .photo-number {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+        }
+
+        .gallery-item .photo-status {
+            display: block;
+            margin-top: 3px;
+            color: #a9a9b8;
+            font-size: 10px;
+        }
+
+        .gallery-item.selected .photo-status {
+            color: #00ffcc;
+        }
+
+        #gallery-note {
+            margin: 9px 0 0;
+            color: #c7c7d5;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .photo-missing {
+            display: none;
+            height: 75px;
+            align-items: center;
+            justify-content: center;
+            color: #ffb7c8;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 520px) {
+            #info {
+                top: 6px;
+                left: 6px;
+                max-width: 230px;
+                padding: 7px 10px;
+            }
+
+            #info h3 {
+                font-size: 14px;
+                margin: 3px 0;
+            }
+
+            #info p {
+                font-size: 11px;
+                margin: 5px 0;
+            }
+
+            .gallery-list {
+                gap: 5px;
+            }
+
+            #gallery {
+                bottom: 6px;
+                padding: 8px;
+            }
+
+            .gallery-item {
+                padding: 3px;
+            }
+
+            .gallery-item img,
+            .photo-missing {
+                height: 58px;
+            }
+
+            .gallery-item .photo-number {
+                font-size: 10px;
+            }
+
+            .gallery-item .photo-status {
+                font-size: 9px;
+            }
+
+            #gallery-note {
+                font-size: 10px;
+            }
         }
     </style>
 
-    <!-- Import Three.js dan Library Pendukung via CDN -->
+    <!-- Import Three.js dan library pendukung via CDN -->
     <script type="importmap">
     {
         "imports": {
@@ -23,31 +196,103 @@
     }
     </script>
 </head>
+
 <body>
+
     <div id="info">
         <h3>WebGL Three.js Picking & GUI</h3>
-        <p>Arahkan kursor mouse untuk <b>Highlight</b> objek.<br>
-        Klik Kiri pada objek untuk <b>Seleksi (Picking & Pulsating)</b>.</p>
-        <p>Objek Terpilih ID: <span id="selected-id" style="color:#00ffcc;">-</span></p>
+        <p>
+            Arahkan kursor mouse untuk <b>Highlight</b> objek.<br>
+            Klik objek 3D atau foto galeri untuk memilihnya.
+        </p>
+        <p>
+            Objek Terpilih ID:
+            <span id="selected-id" style="color:#00ffcc;">-</span>
+        </p>
     </div>
+
+    <!-- GALERI FOTO TERPISAH -->
+    <section id="gallery">
+        <h3>🖼️ Galeri Foto</h3>
+
+        <div class="gallery-list">
+
+            <!-- FOTO 1: ganti nama file sesuai foto pertama -->
+            <button class="gallery-item"
+                    type="button"
+                    data-photo-id="Foto_Galeri_1"
+                    aria-label="Pilih foto galeri 1">
+                <img src="foto1.jpg" alt="Foto galeri 1">
+                <span class="photo-missing">Foto 1<br>Belum tersedia</span>
+                <span class="photo-number">Foto 1</span>
+                <span class="photo-status">Pilih foto</span>
+            </button>
+
+            <!-- FOTO 2: ganti nama file sesuai foto kedua -->
+            <button class="gallery-item"
+                    type="button"
+                    data-photo-id="Foto_Galeri_2"
+                    aria-label="Pilih foto galeri 2">
+                <img src="foto2.jpg" alt="Foto galeri 2">
+                <span class="photo-missing">Foto 2<br>Belum tersedia</span>
+                <span class="photo-number">Foto 2</span>
+                <span class="photo-status">Pilih foto</span>
+            </button>
+
+            <!-- FOTO 3: ganti nama file sesuai foto ketiga -->
+            <button class="gallery-item"
+                    type="button"
+                    data-photo-id="Foto_Galeri_3"
+                    aria-label="Pilih foto galeri 3">
+                <img src="foto3.jpg" alt="Foto galeri 3">
+                <span class="photo-missing">Foto 3<br>Belum tersedia</span>
+                <span class="photo-number">Foto 3</span>
+                <span class="photo-status">Pilih foto</span>
+            </button>
+
+            <!-- FOTO 4: FOTO DIRI -->
+            <button class="gallery-item"
+                    type="button"
+                    data-photo-id="Foto_Diri_4"
+                    aria-label="Pilih foto diri">
+                <img src="foto%20diri.jpg" alt="Foto diri">
+                <span class="photo-missing">foto diri.jpg<br>Belum ditemukan</span>
+                <span class="photo-number">Foto Diri</span>
+                <span class="photo-status">Pilih foto</span>
+            </button>
+
+        </div>
+
+        <p id="gallery-note">
+            Klik salah satu foto untuk memilihnya. Foto yang dipilih akan
+            ditandai dengan warna hijau kebiruan.
+        </p>
+    </section>
 
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
-        // 1. Setup Scene, Camera, Renderer
+        // 1. SETUP SCENE, CAMERA, DAN RENDERER
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x1a1a24);
 
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+        const camera = new THREE.PerspectiveCamera(
+            60,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            100
+        );
+
         camera.position.set(0, 5, 10);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // 2. Add OrbitControls & Lighting
+        // 2. ORBIT CONTROLS DAN PENCAHAYAAN
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
@@ -58,8 +303,9 @@
         dirLight.position.set(5, 10, 7);
         scene.add(dirLight);
 
-        // 3. Generate Multiple 3D Objects
+        // 3. MEMBUAT 15 OBJEK 3D
         let objectsGroup = [];
+
         const geometries = [
             new THREE.BoxGeometry(1.2, 1.2, 1.2),
             new THREE.SphereGeometry(0.8, 32, 32),
@@ -68,6 +314,7 @@
 
         for (let i = 0; i < 15; i++) {
             const geom = geometries[i % 3];
+
             const mat = new THREE.MeshStandardMaterial({
                 color: Math.random() * 0xffffff,
                 roughness: 0.3,
@@ -75,27 +322,100 @@
             });
 
             const mesh = new THREE.Mesh(geom, mat);
+
             mesh.position.x = (Math.random() - 0.5) * 10;
             mesh.position.y = (Math.random() - 0.5) * 4 + 1;
             mesh.position.z = (Math.random() - 0.5) * 10;
 
-            mesh.userData = { id: `Objek_3D_${i + 1}`, originalColor: mat.color.getHex() };
+            mesh.userData = {
+                id: `Objek_3D_${i + 1}`,
+                originalColor: mat.color.getHex()
+            };
+
             scene.add(mesh);
             objectsGroup.push(mesh);
         }
 
-        // 4. Setup Raycaster for Picking
+        // 4. RAYCASTER UNTUK PICKING OBJEK 3D
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
+
         let hoveredObject = null;
         let selectedObject = null;
+        let selectedPhoto = null;
         let pulseTimer = 0;
 
-        window.addEventListener('pointermove', (event) => {
+        const selectedIdElement = document.getElementById('selected-id');
+        const galleryItems = [
+            ...document.querySelectorAll('.gallery-item')
+        ];
+
+        // Fungsi untuk memperbarui tampilan ID objek terpilih
+        function updateSelectedId(id) {
+            selectedIdElement.textContent = id || '-';
+        }
+
+        // Menghapus highlight objek 3D sebelumnya
+        function clearObjectHighlight(object) {
+            if (object && object.material) {
+                object.material.emissive.setHex(0x000000);
+                object.scale.set(1, 1, 1);
+            }
+        }
+
+        // Menghapus status pilihan foto sebelumnya
+        function clearPhotoSelection() {
+            galleryItems.forEach(item => {
+                item.classList.remove('selected');
+
+                const status = item.querySelector('.photo-status');
+                status.textContent = 'Pilih foto';
+            });
+
+            selectedPhoto = null;
+        }
+
+        // Memilih sebuah foto pada galeri
+        function selectGalleryPhoto(item) {
+            if (selectedObject) {
+                clearObjectHighlight(selectedObject);
+                selectedObject = null;
+            }
+
+            hoveredObject = null;
+            clearPhotoSelection();
+
+            selectedPhoto = item;
+            item.classList.add('selected');
+
+            const status = item.querySelector('.photo-status');
+            status.textContent = '✓ Dipilih';
+
+            updateSelectedId(item.dataset.photoId);
+
+            // Foto terpilih dapat diatur melalui GUI
+            guiParams.scale = 1;
+            guiParams.color = '#00ffcc';
+            scaleController.updateDisplay();
+            colorController.updateDisplay();
+        }
+
+        // 5. INTERAKSI MOUSE PADA OBJEK 3D
+        window.addEventListener('pointermove', event => {
+            // Hindari picking saat kursor berada di atas galeri
+            if (event.target.closest('#gallery')) {
+                if (hoveredObject && hoveredObject !== selectedObject) {
+                    hoveredObject.material.emissive.setHex(0x000000);
+                }
+                hoveredObject = null;
+                return;
+            }
+
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
             raycaster.setFromCamera(mouse, camera);
+
             const intersects = raycaster.intersectObjects(objectsGroup);
 
             if (hoveredObject && hoveredObject !== selectedObject) {
@@ -104,6 +424,7 @@
 
             if (intersects.length > 0) {
                 hoveredObject = intersects[0].object;
+
                 if (hoveredObject !== selectedObject) {
                     hoveredObject.material.emissive.setHex(0x333333);
                 }
@@ -112,67 +433,170 @@
             }
         });
 
-        window.addEventListener('click', () => {
+        // Klik objek 3D untuk memilihnya
+        window.addEventListener('click', event => {
+            if (
+                event.target.closest('#gallery') ||
+                event.target.closest('.lil-gui') ||
+                event.target.closest('#info')
+            ) {
+                return;
+            }
+
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
             raycaster.setFromCamera(mouse, camera);
+
             const intersects = raycaster.intersectObjects(objectsGroup);
 
             if (intersects.length > 0) {
                 if (selectedObject) {
-                    selectedObject.material.emissive.setHex(0x000000);
-                    selectedObject.scale.set(1, 1, 1);
+                    clearObjectHighlight(selectedObject);
                 }
+
+                clearPhotoSelection();
 
                 selectedObject = intersects[0].object;
                 selectedObject.material.emissive.setHex(0x00ffcc);
-                document.getElementById('selected-id').innerText = selectedObject.userData.id;
+
+                updateSelectedId(selectedObject.userData.id);
 
                 pulseTimer = 0;
+
+                guiParams.scale = 1;
+                guiParams.color = '#00ffcc';
+                scaleController.updateDisplay();
+                colorController.updateDisplay();
             }
         });
 
-        // 5. GUI Overlay (lil-gui)
+        // 6. INTERAKSI GALERI FOTO
+        galleryItems.forEach(item => {
+            const image = item.querySelector('img');
+            const missingMessage = item.querySelector('.photo-missing');
+
+            // Tampilkan pesan jika file gambar tidak ditemukan
+            image.addEventListener('error', () => {
+                image.style.display = 'none';
+                missingMessage.style.display = 'flex';
+            });
+
+            image.addEventListener('load', () => {
+                image.style.display = 'block';
+                missingMessage.style.display = 'none';
+            });
+
+            // Foto dapat diklik untuk dipilih
+            item.addEventListener('click', event => {
+                event.stopPropagation();
+                selectGalleryPhoto(item);
+            });
+        });
+
+        // 7. GUI OVERLAY (LIL-GUI)
         const gui = new GUI({ title: 'Atribut Objek Terpilih' });
+
         const guiParams = {
             scale: 1,
             color: '#00ffcc',
+
             deleteObject: () => {
+                // Jika objek 3D yang dipilih
                 if (selectedObject) {
-                    scene.remove(selectedObject);
-                    objectsGroup = objectsGroup.filter(obj => obj !== selectedObject);
-                    if (selectedObject.geometry) selectedObject.geometry.dispose();
-                    
+                    const objectToDelete = selectedObject;
+
+                    scene.remove(objectToDelete);
+
+                    objectsGroup = objectsGroup.filter(
+                        obj => obj !== objectToDelete
+                    );
+
+                    objectToDelete.geometry.dispose();
+                    objectToDelete.material.dispose();
+
                     selectedObject = null;
-                    document.getElementById('selected-id').innerText = '- (Terhapus)';
-                } else {
-                    alert('Pilih objek terlebih dahulu untuk menghapus!');
+                    hoveredObject = null;
+
+                    updateSelectedId('- (Terhapus)');
+                    return;
                 }
+
+                // Jika foto galeri yang dipilih
+                if (selectedPhoto) {
+                    const photoToDelete = selectedPhoto;
+
+                    photoToDelete.remove();
+                    selectedPhoto = null;
+
+                    updateSelectedId('- (Foto dihapus)');
+                    return;
+                }
+
+                alert('Pilih objek 3D atau foto terlebih dahulu!');
             },
+
             resetScene: () => {
                 location.reload();
             }
         };
 
-        gui.add(guiParams, 'scale', 0.5, 3).name('Skala Objek').onChange(v => {
-            if (selectedObject) selectedObject.scale.set(v, v, v);
-        });
-        gui.addColor(guiParams, 'color').name('Warna Emissive').onChange(c => {
-            if (selectedObject) selectedObject.material.emissive.setHex(c);
-        });
+        const scaleController = gui
+            .add(guiParams, 'scale', 0.5, 3)
+            .name('Skala Objek')
+            .onChange(value => {
+                if (selectedObject) {
+                    selectedObject.scale.set(value, value, value);
+                }
 
-        gui.add(guiParams, 'deleteObject').name('🗑️ Hapus Objek Terpilih');
-        gui.add(guiParams, 'resetScene').name('🔄 Reset Scene');
+                if (selectedPhoto) {
+                    selectedPhoto.style.transform =
+                        `scale(${value})`;
+                }
+            });
 
-        // 6. Animation Loop
+        const colorController = gui
+            .addColor(guiParams, 'color')
+            .name('Warna Emissive')
+            .onChange(color => {
+                if (selectedObject) {
+                    selectedObject.material.emissive.set(color);
+                }
+
+                if (selectedPhoto) {
+                    selectedPhoto.style.boxShadow =
+                        `0 0 16px ${color}`;
+                }
+            });
+
+        gui.add(guiParams, 'deleteObject')
+            .name('🗑️ Hapus Objek Terpilih');
+
+        gui.add(guiParams, 'resetScene')
+            .name('🔄 Reset Scene');
+
+        // 8. ANIMATION LOOP
         function animate() {
             requestAnimationFrame(animate);
+
             controls.update();
 
-            objectsGroup.forEach(obj => obj.rotation.y += 0.005);
+            objectsGroup.forEach(object => {
+                object.rotation.y += 0.005;
+            });
 
             if (selectedObject) {
                 pulseTimer += 0.08;
-                const scaleFactor = 1 + Math.sin(pulseTimer) * 0.15;
-                selectedObject.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+                const scaleFactor =
+                    guiParams.scale +
+                    Math.sin(pulseTimer) * 0.15;
+
+                selectedObject.scale.set(
+                    scaleFactor,
+                    scaleFactor,
+                    scaleFactor
+                );
             }
 
             renderer.render(scene, camera);
@@ -180,11 +604,20 @@
 
         animate();
 
+        // 9. RESPONSIVE SAAT UKURAN LAYAR BERUBAH
         window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.aspect =
+                window.innerWidth / window.innerHeight;
+
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            renderer.setSize(
+                window.innerWidth,
+                window.innerHeight
+            );
         });
     </script>
+
 </body>
 </html>
+```
