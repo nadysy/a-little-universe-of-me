@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="id">
 <head>
@@ -100,7 +101,6 @@ nav button:hover,.btn:hover{background:#ffffff20;transform:translateY(-2px);bord
 </nav>
 
 <main class="wrap">
-
 <section id="gate" class="page active center hero">
 <div class="eyebrow">✧ a little universe made for me ✧</div>
 <div class="orb">🦋</div>
@@ -119,7 +119,7 @@ nav button:hover,.btn:hover{background:#ffffff20;transform:translateY(-2px);bord
 <h2 class="section-title gradient">Happy Birthday,<br><span id="myName">Nadyy</span>! ✨</h2>
 <p class="subtitle">Hari ini, izinkan diriku berhenti sebentar, menarik napas, dan bangga karena sudah sampai sejauh ini.</p>
 <div class="wishbox" id="birthdayDate">🗓️ 28 Oktober 2026</div>
-<p class="small-note" id="birthdayCountdown">A little countdown to my special day ✨</p>
+<p class="small-note" id="birthdayCountdown">Hari ini adalah waktuku bersinar, bersyukur, dan merayakan semua hal baik yang sedang tumbuh dalam diriku. ✨</p>
 <div class="card">
 <div class="cake" id="cake">🎂</div>
 <p class="bodytext">Ada satu harapan yang ingin kamu titipkan pada semesta?</p>
@@ -128,7 +128,7 @@ nav button:hover,.btn:hover{background:#ffffff20;transform:translateY(-2px);bord
 <button class="btn" onclick="relight()">Nyalakan lagi 🕯️</button>
 </div>
 <div class="wishbox" id="cakeMessage">Pejamkan mata, tarik napas, lalu buat satu harapan. 🌠</div>
-<p class="small-note">Tip: kamu bisa mengganti nama di bagian pengaturan sederhana pada kode HTML.</p>
+<p class="small-note">Hari ini, izinkan dirimu menikmati setiap hal kecil yang membuatmu bahagia. 💗</p>
 </div>
 </section>
 
@@ -148,7 +148,7 @@ nav button:hover,.btn:hover{background:#ffffff20;transform:translateY(-2px);bord
 <label for="letterText">Surat untuk diri sendiri</label>
 <textarea id="letterText" rows="8" style="width:100%;margin:10px 0;padding:12px;border-radius:12px;border:1px solid #ffffff40;background:#17152f;color:#fff8ff;line-height:1.7"></textarea>
 <div class="actions"><button class="btn primary" onclick="saveLetter()">Simpan surat</button></div>
-<p class="small-note">Surat tersimpan di browser perangkat ini.</p>
+<p class="small-note">Surat tersimpan di browser ini.</p>
 </div>
 </section>
 
@@ -162,25 +162,21 @@ nav button:hover,.btn:hover{background:#ffffff20;transform:translateY(-2px);bord
 <div class="photo"><img src="images/1000246568.jpg" alt="Kenangan Nadyy 1" loading="lazy"></div>
 <div class="caption" contenteditable="true">A little moment of joy ♡</div>
 </div>
-
 <div class="polaroid" style="--rot:2deg" onclick="openPhoto(this)">
 <div class="photo"><img src="images/IMG-20211026-WA0076.jpg" alt="Kenangan Nadyy 2" loading="lazy"></div>
 <div class="caption" contenteditable="true">A memory to keep ✨</div>
 </div>
-
 <div class="polaroid" style="--rot:-2deg" onclick="openPhoto(this)">
 <div class="photo"><img src="images/IMG-20220224-WA0062.jpg" alt="Kenangan Nadyy 3" loading="lazy"></div>
 <div class="caption" contenteditable="true">Still becoming magic 🦋</div>
 </div>
-
 <div class="polaroid" style="--rot:1deg" onclick="openPhoto(this)">
 <div class="photo"><img src="images/foto%20diri.jpg" alt="Foto diri Nadyy" loading="lazy"></div>
 <div class="caption" contenteditable="true">A little piece of my story 🌙</div>
 </div>
 </div>
 
-<p class="small-note">Ketuk foto untuk melihatnya lebih dekat. Kamu juga bisa menyentuh caption untuk mengubah tulisannya. Perubahan caption hanya tersimpan sementara di browser ini. 💜</p>
-
+<p class="small-note">Setiap foto punya cerita kecilnya sendiri. ✨ Ketuk fotonya untuk mengenang momen itu lebih dekat, dan ubah caption-nya sesuka hatimu. 💜</p>
 <label class="upload">
 Tambah foto dari perangkat ini (opsional)
 <input id="photoUpload" type="file" accept="image/*" multiple>
@@ -237,7 +233,6 @@ Tambah foto dari perangkat ini (opsional)
 <div id="toast" class="toast"></div>
 
 <script>
-// PERSONALISASI: nama dan tanggal ulang tahun Nadyy.
 const CONFIG={name:'Nadyy',birthday:'2026-10-28'};
 document.getElementById('myName').textContent=CONFIG.name;
 
@@ -245,20 +240,9 @@ const birthdayDate=new Date(CONFIG.birthday+'T00:00:00');
 const dateLabel=birthdayDate.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
 document.getElementById('birthdayDate').textContent='🗓️ '+dateLabel;
 
-function updateCountdown(){
-  const now=new Date();
-  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  let target=new Date(birthdayDate);
-  if(target<today)target=new Date(now.getFullYear()+1,birthdayDate.getMonth(),birthdayDate.getDate());
-  const days=Math.round((target-today)/86400000);
-  const el=document.getElementById('birthdayCountdown');
-  el.textContent=days===0?'It’s your special day, Nadyy! Let your little universe sparkle. ✨':days===1?'Only 1 day to go until your magical day! 🌙':days+' days until your magical day, Nadyy! ✨';
-}
-updateCountdown();
-
 const fireflies=document.getElementById('fireflies');
 for(let i=0;i<22;i++){
-  let f=document.createElement('i');
+  const f=document.createElement('i');
   f.className='fly';
   f.style.left=Math.random()*100+'%';
   f.style.animationDelay=(Math.random()*9)+'s';
@@ -272,7 +256,6 @@ function showPage(id){
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='wishesPage')loadWishes();
 }
-
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;
@@ -280,7 +263,6 @@ function toast(msg){
   clearTimeout(window.toastTimer);
   window.toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
 }
-
 function confetti(){
   const bits=['✦','✧','💗','✨','🌸','⭐'];
   for(let i=0;i<42;i++){
@@ -294,7 +276,6 @@ function confetti(){
     setTimeout(()=>e.remove(),4000);
   }
 }
-
 function blowCandles(){
   playSfx('wish');
   document.getElementById('cake').classList.add('off');
@@ -302,26 +283,18 @@ function blowCandles(){
   confetti();
   toast('Wish made! Semoga hal baik mendekat. 💫');
 }
-
 function relight(){
   playSfx('sparkle');
   document.getElementById('cake').classList.remove('off');
   document.getElementById('cakeMessage').textContent='Lilin menyala lagi. Kamu boleh punya banyak harapan. 🕯️';
 }
-
 function toggleLetter(){
   playSfx('letter');
   document.getElementById('envelope').classList.toggle('open');
 }
-
 document.getElementById('envelope').addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===' '){
-    e.preventDefault();
-    toggleLetter();
-  }
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleLetter();}
 });
-
-const defaultLetter=document.querySelector('.letter').innerHTML;
 
 function editLetter(){
   const box=document.getElementById('letterEditor');
@@ -329,68 +302,52 @@ function editLetter(){
   const saved=localStorage.getItem('birthdayLetter');
   document.getElementById('letterText').value=saved||'Dear me,\n\nTerima kasih sudah bertahan dan terus berusaha. Aku bangga padamu. Semoga tahun ini membawa ketenangan, keberanian, dan hal-hal baik.\n\nWith love, me ♡';
 }
-
 function saveLetter(){
   const val=document.getElementById('letterText').value.trim();
-  if(!val){
-    toast('Tulis sedikit pesan untuk dirimu dulu, ya.');
-    return;
-  }
+  if(!val){toast('Tulis sedikit pesan untuk dirimu dulu, ya.');return;}
   localStorage.setItem('birthdayLetter',val);
   document.querySelector('.letter').textContent=val;
   document.getElementById('letterEditor').style.display='none';
   toast('Suratmu tersimpan di browser ini 💌');
 }
 
-// Fitur upload foto. Pengecekan elemen mencegah JavaScript berhenti jika input tidak tersedia.
 const photoUpload=document.getElementById('photoUpload');
-
 if(photoUpload){
   photoUpload.addEventListener('change',e=>{
     const files=[...e.target.files].filter(f=>f.type.startsWith('image/')).slice(0,12);
     if(!files.length)return;
-
     const gallery=document.getElementById('gallery');
     gallery.innerHTML='';
-
     files.forEach((file,i)=>{
       const url=URL.createObjectURL(file);
       const card=document.createElement('div');
       card.className='polaroid';
       card.style.setProperty('--rot',`${(i%5-2)*1.5}deg`);
-
       const ph=document.createElement('div');
       ph.className='photo';
-
       const img=document.createElement('img');
       img.src=url;
       img.alt='Foto kenangan '+(i+1);
       ph.appendChild(img);
-
       const cap=document.createElement('div');
       cap.className='caption';
       cap.contentEditable='true';
       cap.textContent='Kenangan kecil ♡';
       cap.setAttribute('aria-label','Edit caption foto');
-
       card.append(ph,cap);
       card.addEventListener('click',()=>openPhoto(card));
       gallery.appendChild(card);
     });
-
     toast(`${files.length} foto ditambahkan ke galeri ✨`);
   });
 }
 
 let score=0,timeLeft=20,gameInterval=null,spawnInterval=null,playing=false;
-
 function startGame(){
   playSfx('start');
   clearInterval(gameInterval);
   clearInterval(spawnInterval);
-  score=0;
-  timeLeft=20;
-  playing=true;
+  score=0;timeLeft=20;playing=true;
   document.getElementById('score').textContent=score;
   document.getElementById('time').textContent=timeLeft;
   document.getElementById('gameResult').textContent='Ayo tangkap bintangnya!';
@@ -405,7 +362,6 @@ function startGame(){
     if(timeLeft<=0)endGame();
   },1000);
 }
-
 function spawnStar(){
   if(!playing)return;
   const field=document.getElementById('gamefield');
@@ -421,7 +377,6 @@ function spawnStar(){
     score++;
     document.getElementById('score').textContent=score;
     s.remove();
-
     if(score>=10){
       document.getElementById('gameResult').textContent='Kamu berhasil mengumpulkan 10 bintang! Pesan rahasia: kamu lebih kuat dan lebih berharga daripada yang kadang kamu sadari. 💖';
       confetti();
@@ -431,7 +386,6 @@ function spawnStar(){
   field.appendChild(s);
   setTimeout(()=>s.remove(),1800);
 }
-
 function endGame(){
   playing=false;
   clearInterval(gameInterval);
@@ -439,33 +393,27 @@ function endGame(){
   document.querySelectorAll('.target').forEach(x=>x.remove());
   document.getElementById('gameResult').textContent=score>=10?'Kamu berhasil! Ingat, kamu pantas mendapat hal-hal baik. 💖':`Waktu habis! Kamu menangkap ${score} bintang. Coba lagi untuk membuka pesan rahasia di 10 bintang.`;
 }
-
 function loadWishes(){
   const arr=JSON.parse(localStorage.getItem('birthdayWishes')||'[]');
   document.querySelectorAll('[data-wish]').forEach(c=>c.checked=arr.includes(c.dataset.wish));
 }
-
 function saveWishes(){
   const arr=[...document.querySelectorAll('[data-wish]:checked')].map(c=>c.dataset.wish);
   localStorage.setItem('birthdayWishes',JSON.stringify(arr));
   document.getElementById('wishSummary').textContent=arr.length?`Aku ingin membawa ${arr.length} harapan ke bab berikutnya: ${arr.join(' · ')}. Pelan-pelan, aku akan mengusahakannya. 🌙`:'Belum memilih harapan? Tidak apa-apa. Kamu bisa kembali kapan saja.';
   toast('Harapanmu disimpan di browser ini 🌙');
 }
-
 function showSummary(){
   const arr=[...document.querySelectorAll('[data-wish]:checked')].map(c=>c.dataset.wish);
   document.getElementById('wishSummary').textContent=arr.length?`Harapan yang kupilih: ${arr.join(' · ')}. Satu langkah kecil tetap berarti. ✨`:'Pilih satu atau lebih harapan di atas untuk membuat rangkuman.';
 }
 
-// Audio dibuat langsung oleh browser, tanpa mengunduh file suara eksternal.
 let audioCtx=null,musicOn=false,musicTimer=null;
-
 function getAudio(){
   if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==='suspended')audioCtx.resume();
   return audioCtx;
 }
-
 function tone(freq,duration=0.22,type='sine',volume=0.045,delay=0){
   try{
     const ctx=getAudio(),start=ctx.currentTime+delay;
@@ -475,15 +423,10 @@ function tone(freq,duration=0.22,type='sine',volume=0.045,delay=0){
     gain.gain.setValueAtTime(0.0001,start);
     gain.gain.exponentialRampToValueAtTime(volume,start+0.025);
     gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(start+duration+0.03);
-  }catch(e){
-    /* Audio bisa dibatasi oleh pengaturan browser. */
-  }
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start(start);osc.stop(start+duration+0.03);
+  }catch(e){}
 }
-
 function playSfx(kind='click'){
   const patterns={
     click:[[660,.07,'sine',.018,0]],
@@ -496,8 +439,6 @@ function playSfx(kind='click'){
   };
   (patterns[kind]||patterns.click).forEach(n=>tone(...n));
 }
-
-// Melodi Happy Birthday dimainkan setelah tombol musik ditekan.
 function playBirthdayPhrase(){
   const beat=.31;
   const melody=[
@@ -508,32 +449,25 @@ function playBirthdayPhrase(){
   ];
   let t=0;
   melody.forEach(([freq,beats])=>{
-    tone(freq,beat*beats*.82,'sine',.032,t);
+    tone(freq,beat*beats*.82,'sine',.10,t);
     t+=beat*beats;
   });
   return t*1000;
 }
-
 function toggleMusic(){
-  if(musicOn){
-    stopMusic();
-    return;
-  }
+  if(musicOn){stopMusic();return;}
   try{
     getAudio();
     musicOn=true;
     document.getElementById('musicBtn').textContent='♫̸';
     document.getElementById('musicBtn').title='Hentikan musik ulang tahun';
     playBirthdayPhrase();
-    musicTimer=setInterval(()=>{
-      if(musicOn)playBirthdayPhrase();
-    },16000);
+    musicTimer=setInterval(()=>{if(musicOn)playBirthdayPhrase();},16000);
     toast('Happy Birthday melody is playing 🎂🎶');
   }catch(e){
     toast('Audio belum tersedia. Coba gunakan Chrome dan tekan tombol lagi.');
   }
 }
-
 function stopMusic(){
   musicOn=false;
   clearInterval(musicTimer);
@@ -541,8 +475,6 @@ function stopMusic(){
   document.getElementById('musicBtn').title='Putar musik ulang tahun';
   toast('Musik dihentikan 🌙');
 }
-
-// Efek suara kecil saat berinteraksi.
 document.addEventListener('click',function(e){
   const btn=e.target.closest('button');
   if(!btn||btn.id==='musicBtn')return;
@@ -555,24 +487,21 @@ document.addEventListener('click',function(e){
   else if(label.includes('enter')||label.includes('mulai bermain'))playSfx('start');
   else playSfx('click');
 });
-</script>
 
-<div class="lightbox" id="photoLightbox" onclick="closePhoto()">
-<button class="btn" type="button" onclick="event.stopPropagation();closePhoto()">Tutup ✕</button>
-<img id="lightboxImage" alt="Foto kenangan diperbesar" onclick="event.stopPropagation()">
-</div>
-
-<script>
 function openPhoto(card){
   const img=card.querySelector('.photo img');
   if(!img)return;
   document.getElementById('lightboxImage').src=img.src;
   document.getElementById('photoLightbox').classList.add('show');
 }
-
 function closePhoto(){
   document.getElementById('photoLightbox').classList.remove('show');
 }
 </script>
+
+<div class="lightbox" id="photoLightbox" onclick="closePhoto()">
+<button class="btn" type="button" onclick="event.stopPropagation();closePhoto()">Tutup ✕</button>
+<img id="lightboxImage" alt="Foto kenangan diperbesar" onclick="event.stopPropagation()">
+</div>
 </body>
 </html>
