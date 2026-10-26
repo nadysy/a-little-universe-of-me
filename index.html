@@ -449,7 +449,7 @@ function playBirthdayPhrase(){
   ];
   let t=0;
   melody.forEach(([freq,beats])=>{
-    tone(freq, beat * beats * .82, 'sine', .048, t);
+   tone(freq, beat * beats * .82, 'sine', .096, t);
     t+=beat*beats;
   });
   return t*1000;
